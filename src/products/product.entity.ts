@@ -2,24 +2,24 @@ import { Entity, Column, PrimaryColumn, CreateDateColumn, UpdateDateColumn } fro
 
 @Entity()
 export class Product {
-    @PrimaryColumn()
-    id: string;
+  @PrimaryColumn()
+  id: string;
 
-    @Column()
-    name: string;
+  @Column()
+  name: string;
 
-    @Column()
-    category: string;
+  @Column()
+  category: string;
 
-    @Column('float', { nullable: true })
-    price: number;
+  @Column('float', { nullable: true })
+  price: number;
 
-    @Column({ default: false })
-    deletedAt: boolean;
+  @Column({ default: false })
+  deletedAt: boolean;
 
-    @CreateDateColumn()
-    createdAt: Date;
+  @CreateDateColumn()
+  createdAt: Date;
 
-    @UpdateDateColumn()
-    updatedAt: Date;
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
