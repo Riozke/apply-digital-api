@@ -15,5 +15,3 @@ import { HttpModule } from '@nestjs/axios';
   exports: [ProductsService],
 })
 export class ProductsModule { }
-
-
