@@ -4,8 +4,9 @@ import { Repository } from 'typeorm';
 import { Product } from './product.entity';
 import { HttpService } from '@nestjs/axios';
 import { Observable, of, throwError, from } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, concatMap, map, switchMap } from 'rxjs/operators';
 import { Cron } from '@nestjs/schedule';
+import { PaginatedResponse } from '../types/index';
 
 @Injectable()
 export class ProductsService {
@@ -28,33 +29,44 @@ export class ProductsService {
           price: Number(item.fields.price) || null,
         }));
 
+        // Verifica si los productos se están recuperando correctamente
+        this.logger.log(`Fetched ${products.length} products from Contentful`);
+
         return of(products);
       }),
-      switchMap((products) => {
-        const savePromises = products.map((product) =>
-          from(this.productRepo.findOne({ where: { id: product.id }, withDeleted: true })).pipe(
-            switchMap((existing) => {
-              if (!existing) {
-                return from(this.productRepo.save(this.productRepo.create(product)));
-              } else if (existing.deletedAt) {
-                this.logger.warn(`Skipping deleted product: ${product.id}`);
-                return of(null);
-              }
-              return of(null);
-            }),
-          ),
+      concatMap((products) => {
+        // Para cada producto, realizar la operación de guardado secuencialmente
+        return from(
+          Promise.all(
+            products.map((product) =>
+              this.productRepo.findOne({ where: { id: product.id }, withDeleted: true }).then((existing) => {
+                if (!existing) {
+                  // Si no existe el producto, se guarda en la base de datos
+                  return this.productRepo.save(this.productRepo.create(product));
+                } else if (existing.deletedAt) {
+                  // Si el producto existe pero está marcado como eliminado, se omite
+                  this.logger.warn(`Skipping deleted product: ${product.id}`);
+                  return null;
+                }
+                // Si el producto ya existe y no está eliminado, no hace nada
+                return null;
+              })
+            )
+          )
         );
-        return from(Promise.all(savePromises));
       }),
       map(() => {
+        // Al finalizar, muestra un mensaje de éxito
         this.logger.log('Products synchronized successfully');
       }),
       catchError((error) => {
+        // Si ocurre un error, muestra un mensaje de error
         this.logger.error(`Error fetching products: ${error.message}`);
         return of(null);
-      }),
+      })
     );
   }
+
 
   getAllProducts(): Observable<Product[]> {
     return from(this.productRepo.find()).pipe(
@@ -69,7 +81,7 @@ export class ProductsService {
     page: number = 1,
     limit: number = 5,
     filters?: { name?: string; category?: string; minPrice?: number; maxPrice?: number },
-  ): Observable<{ data: Product[]; total: number; page: number; limit: number }> {
+  ): Observable<PaginatedResponse> {
     const query = this.productRepo.createQueryBuilder('product').where('product.deletedAt IS false');
 
     if (filters?.name) {
@@ -89,13 +101,18 @@ export class ProductsService {
     }
 
     return from(query.take(limit).skip((page - 1) * limit).getManyAndCount()).pipe(
-      map(([data, total]) => ({ data, total, page, limit })),
+      map(([data, total]) => {
+        console.log("Data: ", data);
+        console.log("Total: ", total);
+        return { data, total, page, limit };
+      }),
       catchError((error) => {
         this.logger.error(`Error fetching paginated products: ${error.message}`);
         return of({ data: [], total: 0, page, limit });
       }),
     );
   }
+
 
   deleteProduct(id: string): Observable<void> {
     return from(this.productRepo.findOne({ where: { id } })).pipe(
@@ -104,12 +121,11 @@ export class ProductsService {
           return throwError(() => new NotFoundException(`Product with id ${id} not found`));
         }
 
-        // Ensure the result is converted to `void`
-        return from(this.productRepo.softDelete(id)).pipe(map(() => { })); // Return void
+        return from(this.productRepo.softDelete(id)).pipe(map(() => { }));
       }),
       catchError((error) => {
         this.logger.error(`Error deleting product: ${error.message}`);
-        return of(null); // or `of(void 0)` if you prefer
+        return of(null);
       }),
     );
   }
