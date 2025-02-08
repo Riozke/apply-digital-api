@@ -1,8 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity()
 export class Product {
-    @PrimaryGeneratedColumn('uuid')
+    @PrimaryColumn()
     id: string;
 
     @Column()
@@ -11,9 +11,15 @@ export class Product {
     @Column()
     category: string;
 
-    @Column({ nullable: true })
+    @Column('float', { nullable: true })
     price: number;
 
     @Column({ default: false })
-    deleted: boolean;
+    deletedAt: boolean;
+
+    @CreateDateColumn()
+    createdAt: Date;
+
+    @UpdateDateColumn()
+    updatedAt: Date;
 }
