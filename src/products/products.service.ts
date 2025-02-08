@@ -27,10 +27,13 @@ export class ProductsService {
           name: item.fields.name,
           category: item.fields.category,
           price: Number(item.fields.price) || null,
+          brand: item.fields.brand || null,
+          model: item.fields.model || null,
+          color: item.fields.color || null,
+          stock: item.fields.stock || null,
         }));
 
         this.logger.log(`Fetched ${products.length} products from Contentful`);
-
         return of(products);
       }),
       concatMap((products) => {
@@ -126,7 +129,14 @@ export class ProductsService {
   }
 
   @Cron('0 * * * *')
-  handleCron(): Observable<void> {
-    return this.fetchAndStoreProducts();
+  handleCron(): void {
+    this.fetchAndStoreProducts().subscribe({
+      next: () => {
+        this.logger.log('Cron job executed');
+      },
+      error: (error) => {
+        this.logger.error('Error fetching and storing products:', error);
+      },
+    });
   }
 }

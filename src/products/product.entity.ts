@@ -14,6 +14,18 @@ export class Product {
   @Column('float', { nullable: true })
   price: number;
 
+  @Column({ nullable: true })
+  brand: string;
+
+  @Column({ nullable: true })
+  model: string;
+
+  @Column({ nullable: true })
+  color: string;
+
+  @Column('int', { nullable: true })
+  stock: number;
+
   @Column({ default: false })
   deletedAt: boolean;
 
