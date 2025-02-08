@@ -29,26 +29,21 @@ export class ProductsService {
           price: Number(item.fields.price) || null,
         }));
 
-        // Verifica si los productos se están recuperando correctamente
         this.logger.log(`Fetched ${products.length} products from Contentful`);
 
         return of(products);
       }),
       concatMap((products) => {
-        // Para cada producto, realizar la operación de guardado secuencialmente
         return from(
           Promise.all(
             products.map((product) =>
               this.productRepo.findOne({ where: { id: product.id }, withDeleted: true }).then((existing) => {
                 if (!existing) {
-                  // Si no existe el producto, se guarda en la base de datos
                   return this.productRepo.save(this.productRepo.create(product));
                 } else if (existing.deletedAt) {
-                  // Si el producto existe pero está marcado como eliminado, se omite
                   this.logger.warn(`Skipping deleted product: ${product.id}`);
                   return null;
                 }
-                // Si el producto ya existe y no está eliminado, no hace nada
                 return null;
               })
             )
@@ -56,11 +51,9 @@ export class ProductsService {
         );
       }),
       map(() => {
-        // Al finalizar, muestra un mensaje de éxito
         this.logger.log('Products synchronized successfully');
       }),
       catchError((error) => {
-        // Si ocurre un error, muestra un mensaje de error
         this.logger.error(`Error fetching products: ${error.message}`);
         return of(null);
       })
@@ -102,8 +95,7 @@ export class ProductsService {
 
     return from(query.take(limit).skip((page - 1) * limit).getManyAndCount()).pipe(
       map(([data, total]) => {
-        console.log("Data: ", data);
-        console.log("Total: ", total);
+
         return { data, total, page, limit };
       }),
       catchError((error) => {
@@ -113,7 +105,6 @@ export class ProductsService {
     );
   }
 
-
   deleteProduct(id: string): Observable<void> {
     return from(this.productRepo.findOne({ where: { id } })).pipe(
       switchMap((product) => {
@@ -121,11 +112,15 @@ export class ProductsService {
           return throwError(() => new NotFoundException(`Product with id ${id} not found`));
         }
 
-        return from(this.productRepo.softDelete(id)).pipe(map(() => { }));
+        product.deletedAt = true;
+
+        return from(this.productRepo.save(product)).pipe(
+          map(() => { }),
+        );
       }),
       catchError((error) => {
         this.logger.error(`Error deleting product: ${error.message}`);
-        return of(null);
+        return throwError(() => new Error('Error deleting product'));
       }),
     );
   }

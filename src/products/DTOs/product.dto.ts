@@ -1,4 +1,4 @@
-import { IsInt, Min, IsOptional, IsString, IsNumber } from 'class-validator';
+import { IsInt, Min, IsOptional, IsString, IsNumber, Max } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class GetProductsDTO {
@@ -12,6 +12,7 @@ export class GetProductsDTO {
   @Type(() => Number)
   @IsInt()
   @Min(1)
+  @Max(5)
   limit?: number = 5;
 
   @IsOptional()
