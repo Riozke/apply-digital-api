@@ -6,7 +6,7 @@ import { HttpService } from '@nestjs/axios';
 import { Observable, of, throwError, from } from 'rxjs';
 import { catchError, concatMap, map, switchMap } from 'rxjs/operators';
 import { Cron } from '@nestjs/schedule';
-import { PaginatedResponse } from '../types/index';
+import { PaginatedProductsResponse, PaginatedResponse } from '../types/index';
 
 @Injectable()
 export class ProductsService {
@@ -76,7 +76,7 @@ export class ProductsService {
     page: number = 1,
     limit: number = 5,
     filters?: { name?: string; category?: string; minPrice?: number; maxPrice?: number },
-  ): Observable<PaginatedResponse> {
+  ): Observable<PaginatedProductsResponse> {
     const query = this.productRepo.createQueryBuilder('product').where('product.deletedAt IS false');
 
     if (filters?.name) {

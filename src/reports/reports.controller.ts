@@ -3,18 +3,33 @@ import { ReportsService } from './reports.service';
 import { JwtAuthGuard } from '../authentication/jwt-auth.guard';
 import { FilterReportDto } from './DTOs/filter-report.dto';
 import { Observable, catchError, throwError } from 'rxjs';
-import { RolesGuard } from 'src/guards/roles.guard';
-import { Roles } from 'src/decorator/roles.decorator';
+import { RolesGuard } from 'src/utils/guards/roles.guard';
+import { Roles } from 'src/utils/decorator/roles.decorator';
 import { Role } from 'src/types/roles.enum';
-
+import { ApiOperation, ApiResponse, ApiQuery, ApiSecurity, ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('reports')
 @UseGuards(JwtAuthGuard, RolesGuard)
+@ApiTags('Reports')
 export class ReportsController {
   constructor(private readonly reportsService: ReportsService) { }
 
   @Roles(Role.ADMIN)
   @Get('deleted-percentage')
+  @ApiOperation({
+    summary: 'Get the percentage of deleted items',
+    description: 'Fetches the percentage of items that have been marked as deleted.'
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Percentage of deleted items retrieved successfully.',
+    type: String
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Error occurred while fetching deleted percentage.'
+  })
+  @ApiSecurity('JWT', ['admin'])
   getDeletedPercentage(): Observable<string> {
     return this.reportsService.getDeletedPercentage().pipe(
       catchError((error) => {
@@ -26,6 +41,26 @@ export class ReportsController {
 
   @Roles(Role.ADMIN)
   @Get('non-deleted-percentage')
+  @ApiOperation({
+    summary: 'Get the percentage of non-deleted items',
+    description: 'Fetches the percentage of items that have not been marked as deleted.'
+  })
+  @ApiQuery({
+    name: 'filter',
+    required: false,
+    type: FilterReportDto,
+    description: 'Optional filter for report'
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Percentage of non-deleted items retrieved successfully.',
+    type: Number
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Error occurred while fetching non-deleted percentage.'
+  })
+  @ApiSecurity('JWT', ['admin'])
   getNonDeletedPercentage(@Query() filter: FilterReportDto): Observable<number> {
     return this.reportsService.getNonDeletedPercentage(filter).pipe(
       catchError((error) => {
@@ -37,6 +72,26 @@ export class ReportsController {
 
   @Roles(Role.USER)
   @Get('custom-report')
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Generate a custom report based on filter',
+    description: 'Generates a custom report based on provided filters such as product attributes, date range, etc.'
+  })
+  @ApiQuery({
+    name: 'filter',
+    required: false,
+    type: FilterReportDto,
+    description: 'Filter criteria for custom report'
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Custom report generated successfully.'
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Error occurred while generating custom report.'
+  })
+  @ApiSecurity('JWT', ['user'])
   getCustomReport(@Query() filter: FilterReportDto): Observable<any> {
     return this.reportsService.getCustomReport(filter).pipe(
       catchError((error) => {
