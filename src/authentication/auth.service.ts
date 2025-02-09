@@ -37,6 +37,10 @@ export class AuthService {
     return this.users.find(user => user.email === email && user.password === password) || null;
   }
 
+  validateUser2(email: string, password: string): User | null {
+    return this.users.find(user => user.email === email && user.password === password) || null;
+  }
+
   login(email: string, password: string): string {
     const user = this.validateUser(email, password);
     if (!user) throw new UnauthorizedException('Invalid credentials');
