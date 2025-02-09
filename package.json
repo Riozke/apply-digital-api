@@ -1,8 +1,8 @@
 {
   "name": "apply-digital-api",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "This is an assessment for the company Apply Digital developed in NestJS",
+  "author": "Daniel Cobos - Ryozke/Riozke",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

@@ -1,40 +1,38 @@
 {
-  "root": true,
-  "ignorePatterns": ["**/*"],
-  "plugins": ["@nx"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
-        "@nx/enforce-module-boundaries": [
-          "error",
-          {
-            "enforceBuildableLibDependency": true,
-            "allow": [],
-            "depConstraints": [
-              {
-                "sourceTag": "*",
-                "onlyDependOnLibsWithTags": ["*"]
-              }
-            ]
-          }
-        ]
+        "import/no-unresolved": "error",
+        "import/no-extraneous-dependencies": "error",
+        "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+        "no-console": "warn",
+        "prefer-const": "error",
+        "eqeqeq": ["error", "always"],
+        "curly": ["error", "all"]
       }
     },
     {
       "files": ["*.ts", "*.tsx"],
-      "extends": ["plugin:@nx/typescript"],
+      "extends": ["plugin:@typescript-eslint/recommended"],
+      "parserOptions": {
+        "project": "./tsconfig.json"
+      },
       "rules": {
         "@typescript-eslint/no-extra-semi": "error",
-        "no-extra-semi": "off"
+        "no-extra-semi": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "warn",
+        "@typescript-eslint/no-unused-vars": "warn"
       }
     },
     {
       "files": ["*.js", "*.jsx"],
-      "extends": ["plugin:@nx/javascript"],
+      "extends": ["eslint:recommended"],
       "rules": {
-        "@typescript-eslint/no-extra-semi": "error",
-        "no-extra-semi": "off"
+        "no-extra-semi": "error",
+        "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+        "no-console": "warn",
+        "prefer-const": "error"
       }
     },
     {
@@ -42,7 +40,10 @@
       "env": {
         "jest": true
       },
-      "rules": {}
+      "rules": {
+        "no-unused-expressions": "off",
+        "jest/no-focused-tests": "warn"
+      }
     },
     {
       "files": "*.json",
