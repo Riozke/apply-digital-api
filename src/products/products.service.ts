@@ -63,7 +63,6 @@ export class ProductsService {
     );
   }
 
-
   getAllProducts(): Observable<Product[]> {
     return from(this.productRepo.find()).pipe(
       catchError((error) => {
