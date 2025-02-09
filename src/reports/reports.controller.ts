@@ -94,7 +94,7 @@ export class ReportsController {
     description: 'Error occurred while generating custom report.'
   })
   @ApiSecurity('JWT', ['user'])
-  getCustomReport(@Query() filter: FilterReportDto): Observable<any> {
+  getCustomReport(@Query() filter: FilterReportDto): Observable<{ message: string; count: number; }> {
     return this.reportsService.getCustomReport(filter).pipe(
       catchError((error) => {
         console.error('Error generating custom report', error);
