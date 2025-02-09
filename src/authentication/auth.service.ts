@@ -1,23 +1,32 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import * as fs from 'fs';
+import * as path from 'path';
 import { JwtService } from '@nestjs/jwt';
-
-export interface JwtPayload {
-  username: string;
-  sub: string;
-}
+import { User } from 'src/types';
 
 @Injectable()
 export class AuthService {
-  constructor(private jwtService: JwtService) { }
+  private users: User[];
 
-  async login(identifier: string): Promise<any> {
-    if (!identifier) {
-      throw new Error('Identifier is required');
-    }
+  constructor(private readonly jwtService: JwtService) {
+    this.loadUsers();
+  }
 
-    const payload: JwtPayload = { username: identifier, sub: identifier };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
+  private loadUsers() {
+    const filePath = path.join(__dirname, '../data/users.json');
+    const rawData = fs.readFileSync(filePath, 'utf-8');
+    this.users = JSON.parse(rawData).users;
+  }
+
+  validateUser(email: string, password: string): User | null {
+    return this.users.find(user => user.email === email && user.password === password) || null;
+  }
+
+  login(email: string, password: string): string {
+    const user = this.validateUser(email, password);
+    if (!user) throw new UnauthorizedException('Invalid credentials');
+
+    const payload = { email: user.email, role: user.role, domain: user.domain };
+    return this.jwtService.sign(payload);
   }
 }

@@ -3,12 +3,17 @@ import { ReportsService } from './reports.service';
 import { JwtAuthGuard } from '../authentication/jwt-auth.guard';
 import { FilterReportDto } from './DTOs/filter-report.dto';
 import { Observable, catchError, throwError } from 'rxjs';
+import { RolesGuard } from 'src/guards/roles.guard';
+import { Roles } from 'src/decorator/roles.decorator';
+import { Role } from 'src/types/roles.enum';
+
 
 @Controller('reports')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class ReportsController {
   constructor(private readonly reportsService: ReportsService) { }
 
+  @Roles(Role.ADMIN)
   @Get('deleted-percentage')
   getDeletedPercentage(): Observable<string> {
     return this.reportsService.getDeletedPercentage().pipe(
@@ -19,6 +24,7 @@ export class ReportsController {
     );
   }
 
+  @Roles(Role.ADMIN)
   @Get('non-deleted-percentage')
   getNonDeletedPercentage(@Query() filter: FilterReportDto): Observable<number> {
     return this.reportsService.getNonDeletedPercentage(filter).pipe(
@@ -29,6 +35,7 @@ export class ReportsController {
     );
   }
 
+  @Roles(Role.USER)
   @Get('custom-report')
   getCustomReport(@Query() filter: FilterReportDto): Observable<any> {
     return this.reportsService.getCustomReport(filter).pipe(

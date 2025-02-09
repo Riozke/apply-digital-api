@@ -24,3 +24,16 @@ export type PaginatedResponse = {
   page: number;
   limit: number;
 }
+
+export interface JwtPayload {
+  username: string;
+  sub: string;
+  role?: string;
+}
+
+export interface User {
+  domain: string;
+  email: string;
+  password: string;
+  role: string;
+}
