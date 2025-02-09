@@ -61,37 +61,6 @@ export class ProductsController {
     );
   }
 
-  @Delete(':id')
-  @ApiOperation({ summary: 'Delete a product by ID' })
-  @ApiParam({
-    name: 'id',
-    type: String,
-    description: 'ID of the product to delete',
-    required: true,
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Product deleted successfully.',
-    type: SimpleResponseDTO,
-  })
-  @ApiResponse({
-    status: 500,
-    description: 'Failed to delete product.',
-    type: SimpleResponseDTO,
-  })
-  deleteProduct(@Param('id') id: string): Observable<SimpleResponseDTO> {
-    return this.productsService.deleteProduct(id).pipe(
-      map(() => ({ statusCode: 200, message: `Product with id ${id} deleted successfully` })),
-      catchError((err) => {
-        return of({
-          statusCode: err.status || 500,
-          message: `Failed to delete product with id ${id}`,
-          error: err.message,
-        });
-      })
-    );
-  }
-
   @Get('all')
   @ApiOperation({ summary: 'Get all products' })
   @ApiResponse({
@@ -134,6 +103,37 @@ export class ProductsController {
         return of({
           statusCode: err.status || 500,
           message: 'Error fetching products',
+          error: err.message,
+        });
+      })
+    );
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Delete a product by ID' })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: 'ID of the product to delete',
+    required: true,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Product deleted successfully.',
+    type: SimpleResponseDTO,
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Failed to delete product.',
+    type: SimpleResponseDTO,
+  })
+  deleteProduct(@Param('id') id: string): Observable<SimpleResponseDTO> {
+    return this.productsService.deleteProduct(id).pipe(
+      map(() => ({ statusCode: 200, message: `Product with id ${id} deleted successfully` })),
+      catchError((err) => {
+        return of({
+          statusCode: err.status || 500,
+          message: `Failed to delete product with id ${id}`,
           error: err.message,
         });
       })

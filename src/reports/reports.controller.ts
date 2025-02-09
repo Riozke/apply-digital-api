@@ -3,18 +3,18 @@ import { ReportsService } from './reports.service';
 import { JwtAuthGuard } from '../authentication/jwt-auth.guard';
 import { FilterReportDto } from './DTOs/filter-report.dto';
 import { Observable, catchError, throwError } from 'rxjs';
-import { RolesGuard } from 'src/utils/guards/roles.guard';
-import { Roles } from 'src/utils/decorator/roles.decorator';
-import { Role } from 'src/types/roles.enum';
+import { RolesGuard } from '../utils/guards/roles.guard';
+import { Roles } from '../utils/decorator/roles.decorator';
+import { Role } from '../types/roles.enum';
 import { ApiOperation, ApiResponse, ApiQuery, ApiSecurity, ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('reports')
-@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiTags('Reports')
 export class ReportsController {
   constructor(private readonly reportsService: ReportsService) { }
 
   @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('deleted-percentage')
   @ApiOperation({
     summary: 'Get the percentage of deleted items',
@@ -40,6 +40,7 @@ export class ReportsController {
   }
 
   @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('non-deleted-percentage')
   @ApiOperation({
     summary: 'Get the percentage of non-deleted items',
@@ -71,6 +72,7 @@ export class ReportsController {
   }
 
   @Roles(Role.USER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('custom-report')
   @ApiBearerAuth()
   @ApiOperation({

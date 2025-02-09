@@ -12,7 +12,7 @@ export class AuthService {
     this.loadUsers();
   }
 
-  private loadUsers(): void {
+  loadUsers(): void {
     try {
       const filePath = path.join(__dirname, '../data/users.json');
       if (!fs.existsSync(filePath)) {
