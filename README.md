@@ -59,7 +59,6 @@ Once Docker is installed, ensure it is running before proceeding with the follow
 ## API Documentation
 
 You can find detailed documentation for the available API endpoints at the following URL:
-```plaintext
 {url}/api/docs#/
 
 ## Contributors 👑
