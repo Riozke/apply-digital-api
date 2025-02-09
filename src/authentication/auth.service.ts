@@ -37,13 +37,9 @@ export class AuthService {
     return this.users.find(user => user.email === email && user.password === password) || null;
   }
 
-  validateUser2(email: string, password: string): User | null {
-    return this.users.find(user => user.email === email && user.password === password) || null;
-  }
-
   login(email: string, password: string): string {
     const user = this.validateUser(email, password);
-    if (!user) throw new UnauthorizedException('Invalid credentials');
+    if (!user) { throw new UnauthorizedException('Invalid credentials'); }
 
     const payload = { email: user.email, role: user.role, domain: user.domain };
     return this.jwtService.sign(payload);
