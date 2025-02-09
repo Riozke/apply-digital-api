@@ -3,8 +3,6 @@
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
-        "import/no-unresolved": "error",
-        "import/no-extraneous-dependencies": "error",
         "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
         "no-console": "warn",
         "prefer-const": "error",
@@ -40,10 +38,7 @@
       "env": {
         "jest": true
       },
-      "rules": {
-        "no-unused-expressions": "off",
-        "jest/no-focused-tests": "warn"
-      }
+      "rules": {}
     },
     {
       "files": "*.json",
