@@ -4,6 +4,7 @@ import { ReportsService } from './reports.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Product } from '../products/product.entity';
 import { AuthModule } from '../authentication/auth.module';
+import { RolesGuard } from 'src/utils/guards/roles.guard';
 
 @Module({
     imports: [
@@ -11,6 +12,6 @@ import { AuthModule } from '../authentication/auth.module';
         AuthModule,
     ],
     controllers: [ReportsController],
-    providers: [ReportsService],
+    providers: [ReportsService, RolesGuard],
 })
 export class ReportsModule { }
