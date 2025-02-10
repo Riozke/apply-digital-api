@@ -40,18 +40,24 @@ Once Docker is installed, ensure it is running before proceeding with the follow
     ```
 
 3. **Generate a token to access protected endpoints**:
-    Use the login endpoint to generate an authentication token for protected endpoints:
+    - Use the login endpoint to generate an authentication token for protected endpoints:
     ```bash
     POST {url}/auth/login
     ```
-    The response will include a token that you can use to make authenticated requests.
+    - The response will include a token that you can use to make authenticated requests.
+    
+    - Additionally, run the following endpoint to fetch products from the Contentful API:
+    ```bash
+    GET {URL}/products/manual-fetch
+    ```
 
 4. **Simulate Authorization with Permissions**:
     You can simulate authorization using the user credentials stored in the following file:
     ```plaintext
     src/data/users.json
     ```
-    This file contains the email addresses and passwords for users (both admin and regular). Use these credentials to generate the token for the respective user role.
+    This file contains the email addresses and passwords for users (both admin and users). Use these credentials to generate the token for the respective user role.
+    Check the documentation to see which endpints require authorization
 
 5. **Environment Variables**:
     An example of the required `.env` file is provided in `.env.example`. Copy the contents to a `.env` file in the root directory of the project and adjust the environment-specific values.
