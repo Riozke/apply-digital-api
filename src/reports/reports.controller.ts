@@ -62,7 +62,7 @@ export class ReportsController {
     description: 'Error occurred while fetching non-deleted percentage.'
   })
   @ApiSecurity('JWT', ['admin'])
-  getNonDeletedPercentage(@Query() filter: FilterReportDto): Observable<number> {
+  getNonDeletedPercentage(@Query() filter: FilterReportDto): Observable<string> {
     return this.reportsService.getNonDeletedPercentage(filter).pipe(
       catchError((error) => {
         console.error('Error fetching non-deleted percentage', error);

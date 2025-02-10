@@ -34,7 +34,7 @@ export class ReportsService {
     );
   }
 
-  getNonDeletedPercentage(filter: FilterReportDto): Observable<number> {
+  getNonDeletedPercentage(filter: FilterReportDto): Observable<string> {
     return from(this.productRepository.count()).pipe(
       switchMap((total) => {
         const query = this.productRepository.createQueryBuilder('product').where('product.deletedAt = false');
@@ -53,7 +53,10 @@ export class ReportsService {
         }
 
         return from(query.getCount()).pipe(
-          map((nonDeletedCount) => (total ? (nonDeletedCount / total) * 100 : 0)),
+          map((nonDeletedCount) => {
+            const percentage = total ? (nonDeletedCount / total) * 100 : 0;
+            return `The percentage of non deleted products is ${percentage.toFixed(2)}%`
+          }),
           catchError((error: Error) => {
             console.error('Error fetching non-deleted percentage', error);
             return throwError(() => new Error('Error calculating non-deleted percentage.'));
