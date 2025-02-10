@@ -56,7 +56,7 @@ describe('ReportsController', () => {
 
   describe('getNonDeletedPercentage', () => {
     it('should return the percentage of non-deleted items', (done) => {
-      const result = 90;
+      const result = '90';
       jest.spyOn(reportsService, 'getNonDeletedPercentage').mockReturnValue(of(result));
 
       controller.getNonDeletedPercentage(new FilterReportDto()).subscribe({
