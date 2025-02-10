@@ -1,4 +1,4 @@
-name: Continuous delivery - Monolith API
+name: CD Pipeline
 
 on:
   push:
@@ -7,22 +7,25 @@ on:
 
 jobs:
   deploy:
+    name: Deploy to Production
     runs-on: ubuntu-latest
-
     steps:
       - name: Check out code
         uses: actions/checkout@v3
 
-      - name: Set up node
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: lts/Jod
 
-      - name: Install dependencies
-        run: npm install
+      - name: Restore Cached Dependencies
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: npm-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
       - name: Build project
-        run: npm run build 
+        run: npm run build
 
-      - name: Simulate deployment
-        run: echo "Simulating deployment to production..." 
+      - name: Deploy to production
+        run: echo "Deploying..."
