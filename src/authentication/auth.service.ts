@@ -39,7 +39,10 @@ export class AuthService {
 
   login(email: string, password: string): string {
     const user = this.validateUser(email, password);
-    if (!user) { throw new UnauthorizedException('Invalid credentials'); }
+
+    if (!user) { 
+      throw new UnauthorizedException('Invalid credentials'); 
+    }
 
     const payload = { email: user.email, role: user.role, domain: user.domain };
     return this.jwtService.sign(payload);
