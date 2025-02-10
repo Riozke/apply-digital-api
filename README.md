@@ -56,7 +56,8 @@ Once Docker is installed, ensure it is running before proceeding with the follow
     ```plaintext
     src/data/users.json
     ```
-    This file contains the email addresses and passwords for users (both admin and regular). Use these credentials to generate the token for the respective user role.
+    This file contains the email addresses and passwords for users (both admin and users). Use these credentials to generate the token for the respective user role.
+    Check the documentation to see which endpints require authorization
 
 5. **Environment Variables**:
     An example of the required `.env` file is provided in `.env.example`. Copy the contents to a `.env` file in the root directory of the project and adjust the environment-specific values.
